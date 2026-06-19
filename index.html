@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Premium Chat System</title>
+<style>
+body{font-family:Arial;background:#111;color:#fff}
+.chat-modal{border:1px solid #333;padding:10px;height:300px;overflow:auto}
+.chat-modal.private-vip{border:2px solid red;box-shadow:0 0 20px red}
+.msg{margin:5px 0}
+.msg-user{color:#0f0}
+.msg-bot{color:#f66}
+</style>
+</head>
+<body>
+<h2>Premium Chat System</h2>
+<button onclick="register()">Registrieren + Zahlung</button>
+
+<div id="dashboard" style="margin-top:20px;display:none">
+<h3>Dashboard</h3>
+<p>Status: <span id="status"></span></p>
+</div>
+
+<div id="chat" class="chat-modal"></div>
+<input id="msg" placeholder="schreiben...">
+<button onclick="sendMsg()">Send</button>
+
+<script>
+let userType = 'free';
+
+function register(){
+ fetch("http://localhost:4242/create-checkout-session",{method:"POST"})
+ .then(r=>r.json())
+ .then(d=>window.location.href=d.url);
+}
+
+function activateVIP(){
+ userType='vip';
+ document.getElementById("status").textContent="VIP 🔥";
+ document.getElementById("dashboard").style.display='block';
+ document.getElementById("chat").classList.add("private-vip");
+}
+
+function sendMsg(){
+ const chat=document.getElementById("chat");
+ const text=document.getElementById("msg").value;
+
+ let u=document.createElement("div");
+ u.className="msg msg-user";
+ u.textContent=text;
+ chat.appendChild(u);
+
+ let b=document.createElement("div");
+ b.className="msg msg-bot";
+
+ if(userType==='free'){
+  b.textContent="🔒 Nur im Abo sichtbar";
+ }else{
+  b.textContent="Jetzt sind wir privat… 😘";
+ }
+
+ chat.appendChild(b);
+}
+</script>
+</body>
+</html>
